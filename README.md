@@ -102,6 +102,13 @@ Caveats
 * Some people have problems programming it with USBAsp and TinyISP - but this is not readily reproducible ArduinoAsISP works reliably. In some cases, it has been found that connecting reset to ground while using the ISP programmer fixes things (particularly when using the USBAsp with eXtremeBurner AVR) - if doing this, you must release reset (at least momentarily) after each batch of programming operation. 
 * At >4v, the speed of the internal oscillator on 1634R and 841 parts increases significantly - enough that neither serial (and hence the bootloader) does not work. It is recommended to run at 3.3v if using internal RC oscillator as a clock source. A future release may include an 8.1mhz internal RC @5v option, with it's own bootloader. 
 * When using weird clock frequencies (ones with a frequency (in mhz) by which 64 cannot be divided evenly), micros() is 4-5 times slower (~110 clocks); it still reports the time at the point when it was called, not the end, however, and the time it gives is pretty close to reality (w/in 1% or so). This combination of performance and accuracy is the result of hand tuning for these clock speeds. For really weird clock speeds (ie, if you add your own), it will be slower still - hundreds of clock cycles - on the plus side, it still gives reasonably accurate numbers back even on exotic clock speeds, ("stock" micros() executes equally fast at all clock speeds, and just returns bogus values with anything that 64 doesn't divide evenly by) 
+* Flash the 841 with an ArduinoISP : Using the ArduinoISP you'll be able to burn the bootloader but not any sketch. Avrdude will not be able to sync with the 841 (error : stk_500 ... no sync ...)
+To fix this you need to remove the call to the heartbeat() function in the ArduinoISP sketch (obviously led 9 won't glow anymore). Comment the line 294 to fix the problem.
+...
+293:  // light the heartbeat LED
+294:  //heartbeat(); 
+295:  if (SERIAL.available()) {
+...
 
 
 Manual Installation
